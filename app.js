@@ -133,7 +133,7 @@ function deleteEmployee(response){
 function endProgram(){
     connection.end();
 }
-function rolessQ() {
+function rolesQ() {
     const rolesQ = [
         {
             type: 'rawlist',
