@@ -175,7 +175,7 @@ function rolesQ() {
     })
 };
 function departmentsQ() {
-    const departmentsQ = [
+    const deptQ = [
         {
             type: 'rawlist',
             name: 'departmentOptions',
@@ -183,7 +183,7 @@ function departmentsQ() {
             choices: ['View Departments', 'Add Departments', 'Delete Departments', 'Go Back']
         }
     ];
-    inquirer.prompt(departmentsQ).then(response =>{
+    inquirer.prompt(deptQ).then(response =>{
         switch (response.departmentOptions) {
             case 'View Departments':
                 viewDepartments();
@@ -216,7 +216,7 @@ function departmentsQ() {
     })
 };
 function employeesQ() {
-    const employeeQ = [
+    const empQ = [
         {
             type: 'rawlist',
             name: 'employeeOptions',
@@ -224,7 +224,7 @@ function employeesQ() {
             choices: ['View Employees', 'Add Employee', 'Delete Employee', 'Go Back']
         }
     ];
-    inquirer.prompt(employeeQ).then( response =>{
+    inquirer.prompt(empQ).then( response =>{
         switch (response.employeeOptions) {
             case 'View Employees':
                 viewEmployees();
