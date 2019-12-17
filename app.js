@@ -103,8 +103,8 @@ function updateManagers() {
     });
 };
 // view employees by manager
-function viewByMngr() {
-    const query = connection.query("SELECT * FROM employee WHERE manager_id= ?", 3, (err, res)=>{
+function viewByMngr(response) {
+    const query = connection.query("SELECT * FROM employee WHERE manager_id= ?", [response.manager], (err, res)=>{
         if (err) throw err;
         console.table("View Employees By Manager", res, "press any key");
     });
@@ -134,25 +134,25 @@ function endProgram(){
     connection.end();
 }
 function rolesQ() {
-    const rolesQ = [
+    const rQ = [
         {
             type: 'rawlist',
             name: 'roleOptions',
             message: 'What would you like to do?',
-            choices: ['View Roles', 'View Roles', 'Delete Roles', 'Go Back']
+            choices: ['View Roles', 'Add Roles', 'Delete Roles', 'Go Back']
         }
     ];
-    inquirer.prompt(rolesQ).then(response =>{
+    inquirer.prompt(rQ).then(response =>{
         switch (response.roleOptions) {
             case 'View Roles':
                 viewRoles();
                 rolesQ();
                 break;
-            case 'Add Department':
+            case 'Add Roles':
                 addRoles();
                 rolesQ();
                 break;
-            case 'Delete Department':
+            case 'Delete Roles':
                 viewRoles();
                 inquirer.prompt(
                     {
@@ -221,7 +221,7 @@ function employeesQ() {
             type: 'rawlist',
             name: 'employeeOptions',
             message: 'What would you like to do?',
-            choices: ['View Employees', 'Add Employee', 'Delete Employee', 'Go Back']
+            choices: ['View Employees', 'Add Employee', 'Delete Employee', 'View by Manager', 'Go Back']
         }
     ];
     inquirer.prompt(empQ).then( response =>{
@@ -231,12 +231,39 @@ function employeesQ() {
                 employeesQ();
                 break;
             case 'Add Employee':
-                addEmployees();
-                employeesQ();
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'first_name',
+                        message: 'First name',
+                    },
+                    {
+                        type: 'input',
+                        name: 'last_name',
+                        message: 'Last name',
+                    },
+                    {
+                        type: 'input',
+                        name: 'role_id',
+                        message: 'Role ID',
+                    },
+                    {
+                        type: 'input',
+                        name: 'manager_id',
+                        message: 'Manager ID',
+                    }
+                ]).then(answers => {
+                    let first_name = answers.first_name;
+                    let last_name = answers.last_name;
+                    let role_id = answers.role_id;
+                    let manager_id = answers.manager_id;
+                    addEmployees(first_name, last_name, role_id, manager_id);
+                    employeesQ();
+                });
                 break;
             case 'Delete Employee':
                 viewEmployees();
-                inquirer.prompt(
+                inquirer.prompt([
                     {
                         type: 'input',
                         name: 'id',
@@ -245,8 +272,23 @@ function employeesQ() {
                             return val;
                         }
                     }
-                ).then( response => {
+                ]).then( response => {
                     deleteEmployee(response);
+                    employeesQ();
+                });
+                break;
+            case 'View by Manager':
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'manager',
+                        message: 'Enter manager ID',
+                        filter: function(val){
+                            return val;
+                        }
+                    }
+                ]).then( result => {
+                    viewByMngr(result);
                     employeesQ();
                 });
                 break;
